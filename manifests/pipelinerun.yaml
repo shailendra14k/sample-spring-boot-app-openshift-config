@@ -18,7 +18,7 @@ spec:
           resources:
             requests:
               storage: 1Gi
-    - name: sonar-settings
+    - name: sonar-credentials
       secret:
         secretName: sonarqube-secret-token
     - configMap:
