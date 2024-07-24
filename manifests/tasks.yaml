@@ -5,7 +5,7 @@ metadata:
 spec:
   params:
     - default: >-
-        image-registry.openshift-image-registry.svc:5000/openshift/java:latest
+        registry.redhat.io/ubi8/openjdk-21@sha256:bb95ea866269ac8652f666ee1587d71f4f43da33493c2be7f6a9548bcfd2407c
       description: Maven base image
       name: MAVEN_IMAGE
       type: string
