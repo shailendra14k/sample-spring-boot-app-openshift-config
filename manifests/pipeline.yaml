@@ -48,6 +48,8 @@ spec:
           value: 'https://sonarcloud.io'
         - name: SONAR_PROJECT_KEY
           value: sample-spring-boot-app-openshift
+        - name: SONAR_ORGANIZATION
+          value: shailendra14k
       runAfter:
         - maven
       taskRef:
