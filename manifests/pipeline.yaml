@@ -1,0 +1,95 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: sample-spring-boot-app-openshift
+spec:
+  params:
+    - description: branch
+      name: git-revision
+      type: string
+      default: master
+  tasks:
+    - name: git-clone
+      params:
+        - name: url
+          value: 'https://github.com/shailendra14k/sample-spring-boot-app-openshift.git'
+        - name: revision
+          value: $(params.git-revision)
+        - name: sslVerify
+          value: 'false'
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: source-dir
+    - name: maven
+      params:
+        - name: GOALS
+          value:
+            - test
+        - name: PROXY_PROTOCOL
+          value: http
+        - name: CONTEXT_DIR
+          value: .
+      runAfter:
+        - git-clone
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      workspaces:
+        - name: source
+          workspace: source-dir
+        - name: maven-settings
+          workspace: maven-settings
+    - name: sonarqube
+      params:
+        - name: SONAR_HOST_URL
+          value: 'https://sonarcloud.io'
+        - name: SONAR_PROJECT_KEY
+          value: sample-spring-boot-app-openshift
+      runAfter:
+        - maven
+      taskRef:
+        kind: Task
+        name: sonarqube-scanner
+      workspaces:
+        - name: source
+          workspace: source-dir
+        - name: sonar-settings
+          workspace: sonar-settings
+    - name: get-version
+      params:
+        - name: CONTEXT_DIR
+          value: .
+      runAfter:
+        - sonarqube
+      taskRef:
+        kind: Task
+        name: maven-get-project-version
+      workspaces:
+        - name: source
+          workspace: source-dir
+    - name: s2i-java
+      params:
+        - name: PATH_CONTEXT
+          value: .
+        - name: TLSVERIFY
+          value: 'false'
+        - name: MAVEN_CLEAR_REPO
+          value: 'false'
+        - name: IMAGE
+          value: >-
+            image-registry.openshift-image-registry.svc:5000/demo/sample-spring-boot-app-openshift:$(tasks.get-version.results.version)
+      runAfter:
+        - get-version
+      taskRef:
+        kind: ClusterTask
+        name: s2i-java
+      workspaces:
+        - name: source
+          workspace: source-dir
+  workspaces:
+    - name: source-dir
+    - name: maven-settings
+    - name: sonar-settings

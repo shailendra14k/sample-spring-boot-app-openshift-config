@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: "sample-spring-boot-app-openshift"
+spec:
+  project: default
+  source:
+    path: manifests
+    repoURL: 
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 10m
