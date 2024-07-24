@@ -158,7 +158,7 @@ spec:
             exit 1
           }
 
-          echo "sonar.java.binaries=**/target/classes" >> sonar-project.properties
+          echo "sonar.java.binaries=target/classes" >> sonar-project.properties
 
           [[ -n "${PROJECT_VERSION}" ]] && {
             echo "sonar.projectVersion=${PROJECT_VERSION}" >> sonar-project.properties
