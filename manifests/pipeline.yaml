@@ -56,8 +56,8 @@ spec:
       workspaces:
         - name: source
           workspace: source-dir
-        - name: sonar-settings
-          workspace: sonar-settings
+        - name: sonar-credentials
+          workspace: sonar-credentials
     - name: get-version
       params:
         - name: CONTEXT_DIR
@@ -92,4 +92,4 @@ spec:
   workspaces:
     - name: source-dir
     - name: maven-settings
-    - name: sonar-settings
+    - name: sonar-credentials
